@@ -40,6 +40,15 @@ require("./utils/fileExpiration");
 const session = require("express-session");
 
 dotenv.config();
+
+// Keep the process alive on stray async errors (e.g. failed external API calls)
+process.on("unhandledRejection", (reason) => {
+  Logger.error(`Unhandled rejection: ${reason?.stack || reason?.message || reason}`);
+});
+process.on("uncaughtException", (error) => {
+  Logger.error(`Uncaught exception: ${error?.stack || error?.message || error}`);
+});
+
 const app = express();
 
 app.set("trust proxy", 1);
