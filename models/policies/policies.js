@@ -22,6 +22,7 @@ module.exports = (sequelize) => {
           "gold-loan-terms-and-conditions",
           "kyc-policy",
           "methodology-and-valuation-of-gold-collateral",
+          "contest",
         ),
         allowNull: true,
       },
