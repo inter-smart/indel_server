@@ -563,6 +563,8 @@ class JobApplicationSubmissionController {
         {
           model: models.CareerJobs,
           as: "job",
+          // Keep the job title visible on existing applications after a job is soft-deleted.
+          paranoid: false,
           attributes: ["id", "job_title", "role_id"],
           ...(Object.keys(jobWhere).length > 0 && { where: jobWhere }),
           include: [
@@ -1377,6 +1379,7 @@ class JobApplicationSubmissionController {
         {
           model: models.CareerJobs,
           as: "job",
+          paranoid: false,
           attributes: ["id", "job_title"],
           include: [
             {

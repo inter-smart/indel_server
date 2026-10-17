@@ -196,6 +196,8 @@ class ApplicantsController {
           {
             model: models.CareerJobs,
             as: "job",
+            // Preserve job context in an applicant's history after soft deletion.
+            paranoid: false,
             // attributes: ["id", "job_title"],
             include: [
               {
