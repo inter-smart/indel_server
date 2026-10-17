@@ -661,18 +661,9 @@ class JobsController {
         jobWhereConditions.role_id = parseInt(role_id);
       }
 
-      await Jobs.update(
-        { is_active: false },
-        {
-          where: {
-            end_date: {
-              [Op.ne]: null,
-              [Op.lt]: new Date(),
-            },
-            is_active: true,
-          },
-        },
-      );
+      // Jobs past their end_date are deactivated by a periodic cron job
+      // (utils/deactivateExpiredJobs.js) instead of inline here, so a GET
+      // request no longer pays for a table-scanning UPDATE on every call.
 
       // Use separate count query to avoid issues with joins
       const totalItems = await Jobs.count({

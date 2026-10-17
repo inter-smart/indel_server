@@ -37,6 +37,7 @@ const { initPopupSettings } = require("./utils/initPopupSettings");
 const { initDirectorsContent } = require("./utils/initDirectorsContent");
 const { initNcdPageContent } = require("./utils/initNcdContent");
 require("./utils/fileExpiration");
+require("./utils/deactivateExpiredJobs");
 const session = require("express-session");
 
 dotenv.config();
