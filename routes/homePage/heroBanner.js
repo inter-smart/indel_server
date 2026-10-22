@@ -12,6 +12,7 @@ const uploadField = upload.fields([
   { name: "image_mobile", maxCount: 1 },
   { name: "video", maxCount: 1 },
   { name: "video_mobile", maxCount: 1 },
+  { name: "thumbnail", maxCount: 1 },
 ]);
 
 router.get("/", HeroBannerController.getAll);

@@ -30,6 +30,7 @@ class HeroBannerController {
       const mobileImage = req.files?.image_mobile ? `/uploads/banner/${req.files.image_mobile[0].filename}` : null;
       const video = req.files?.video ? `/uploads/banner/${req.files.video[0].filename}` : null;
       const video_mobile = req.files?.video_mobile ? `/uploads/banner/${req.files.video_mobile[0].filename}` : null;
+      const thumbnail = media_type === "video" && req.files?.thumbnail ? `/uploads/banner/${req.files.thumbnail[0].filename}` : null;
 
       if (state_id) {
         const state = await States.findByPk(state_id);
@@ -47,6 +48,7 @@ class HeroBannerController {
         image_mobile: mobileImage,
         video,
         video_mobile,
+        thumbnail,
         media_type,
         image_alt_text,
         is_active,
@@ -146,6 +148,7 @@ class HeroBannerController {
       let image_mobile = heroBanner.image_mobile;
       let video = heroBanner.video;
       let video_mobile = heroBanner.video_mobile;
+      let thumbnail = heroBanner.thumbnail;
 
       // MEDIA TYPE HANDLING
       if (media_type === "video") {
@@ -153,6 +156,8 @@ class HeroBannerController {
         video = req.files?.video ? `/uploads/banner/${req.files.video[0].filename}` : heroBanner.video;
 
         video_mobile = req.files?.video_mobile ? `/uploads/banner/${req.files.video_mobile[0].filename}` : heroBanner.video_mobile;
+
+        thumbnail = req.files?.thumbnail ? `/uploads/banner/${req.files.thumbnail[0].filename}` : heroBanner.thumbnail;
 
         // Force images to NULL
         image = null;
@@ -168,6 +173,7 @@ class HeroBannerController {
         // Force videos to NULL
         video = null;
         video_mobile = null;
+        thumbnail = null;
       }
 
       await heroBanner.update({
@@ -179,6 +185,7 @@ class HeroBannerController {
         image_mobile,
         video,
         video_mobile,
+        thumbnail,
         media_type,
         state_id: state_id || null,
         image_alt_text,
