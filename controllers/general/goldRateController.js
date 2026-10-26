@@ -8,7 +8,7 @@ class GoldRateController {
   static async fetchGoldRate(req, res, next) {
     try {
       const { data } = await axios.post(
-        "http://insight.indelmoney.com:8089/indel/api/insight/latestLTV",
+        "https://insight.indelmoney.com:8089/indel/api/insight/latestLTV",
         {},
         {
           headers: {
