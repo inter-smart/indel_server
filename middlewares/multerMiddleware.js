@@ -24,22 +24,15 @@ const getStorage = (subfolder) => {
   });
 };
 
-const createUploadMiddleware = (subfolder) => {
+const createUploadMiddleware = (subfolder, options = {}) => {
+  const { fileSize = 50 * 1024 * 1024, fileFilter } = options;
+
   return multer({
     storage: getStorage(subfolder),
     limits: {
-      fileSize: 50 * 1024 * 1024, // 50MB limit
+      fileSize, // 50MB by default
     },
-    // fileFilter: (req, file, cb) => {
-    //   const filetypes = /jpeg|jpg|png|svg|webp|mp4|mov|avi|pdf|xlsx/;
-
-    //   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    //   const mimetype = filetypes.test(file.mimetype);
-    //   if (extname && mimetype) {
-    //     return cb(null, true);
-    //   }
-    //   cb(new CustomError("Images only (jpeg, jpg, png)", 400));
-    // },
+    ...(fileFilter && { fileFilter }),
   });
 };
 
