@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const { models } = require("../../models/index");
 const CustomError = require("../../utils/customError");
 const Logger = require("../../services/logger");
@@ -10,6 +10,7 @@ const {
   deleteRequestFiles,
   parsePaging,
   buildPagination,
+  parseSort,
   generateUniqueSlug,
   isSlugTaken,
   countBy,
@@ -18,6 +19,21 @@ const {
 const { CelebrationCategories, CelebrationSubcategories } = models;
 
 const UPLOAD_FOLDER = "celebrations/categories";
+
+const DEFAULT_ORDER = [
+  ["order", "ASC"],
+  ["id", "ASC"],
+];
+
+// ?sort_by values. subcategory_count is a correlated count, so sorting stays in SQL and paging stays correct.
+const SORTABLE = {
+  order: ["order"],
+  title: ["title"],
+  slug: ["slug"],
+  subcategory_count: [
+    literal('(SELECT COUNT(*) FROM celebration_subcategories AS s WHERE s.category_id = "CelebrationCategories"."id")'),
+  ],
+};
 
 const withCounts = async (rows) => {
   const counts = await countBy(
@@ -33,13 +49,11 @@ class CelebrationCategoriesController {
     try {
       const { search } = req.query;
       const { hasPaging, page, limit, offset } = parsePaging(req.query);
-      const order = [
-        ["order", "ASC"],
-        ["id", "ASC"],
-      ];
+      const order = parseSort(req.query, SORTABLE, DEFAULT_ORDER);
       const where = {};
       if (search && search.trim()) {
-        where.title = { [Op.iLike]: `%${search.trim()}%` };
+        const term = `%${search.trim()}%`;
+        where[Op.or] = [{ title: { [Op.iLike]: term } }, { slug: { [Op.iLike]: term } }];
       }
 
       if (!hasPaging) {

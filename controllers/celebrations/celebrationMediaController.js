@@ -9,6 +9,7 @@ const {
   deleteRequestFiles,
   parsePaging,
   buildPagination,
+  parseSort,
 } = require("../../utils/celebrationHelpers");
 
 const { CelebrationCategories, CelebrationSubcategories, CelebrationMedia } = models;
@@ -20,6 +21,23 @@ const subcategoryInclude = {
   as: "subcategory",
   attributes: ["id", "title", "slug", "category_id"],
   include: [{ model: CelebrationCategories, as: "category", attributes: ["id", "title", "slug"] }],
+};
+
+const DEFAULT_ORDER = [
+  ["order", "ASC"],
+  ["id", "ASC"],
+];
+
+// ?sort_by values
+const SORTABLE = {
+  order: ["order"],
+  is_video: ["is_video"],
+  subcategory: [{ model: CelebrationSubcategories, as: "subcategory" }, "title"],
+  category: [
+    { model: CelebrationSubcategories, as: "subcategory" },
+    { model: CelebrationCategories, as: "category" },
+    "title",
+  ],
 };
 
 const requireSubcategory = async (subcategoryId) => {
@@ -96,10 +114,7 @@ class CelebrationMediaController {
     try {
       const { search, subcategory_id, category_id, type } = req.query;
       const { hasPaging, page, limit, offset } = parsePaging(req.query);
-      const order = [
-        ["order", "ASC"],
-        ["id", "ASC"],
-      ];
+      const order = parseSort(req.query, SORTABLE, DEFAULT_ORDER);
 
       const where = {};
       if (subcategory_id) where.subcategory_id = parseInt(subcategory_id, 10) || 0;
@@ -112,6 +127,7 @@ class CelebrationMediaController {
           { image_alt: { [Op.iLike]: term } },
           { thumbnail_alt: { [Op.iLike]: term } },
           { "$subcategory.title$": { [Op.iLike]: term } },
+          { "$subcategory.category.title$": { [Op.iLike]: term } },
         ];
       }
 

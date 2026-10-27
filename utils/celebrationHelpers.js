@@ -76,6 +76,15 @@ const buildPagination = (total, page, limit) => {
   };
 };
 
+// ?sort_by / ?sort_dir against a whitelist of `{ key: [order target...] }` (a column, an association path or a
+// literal). Unknown keys fall back to `defaultOrder`; `id` is the tiebreaker so pages never overlap.
+const parseSort = (query, sortable, defaultOrder) => {
+  const target = Object.prototype.hasOwnProperty.call(sortable, query.sort_by) ? sortable[query.sort_by] : null;
+  if (!target) return defaultOrder;
+  const direction = String(query.sort_dir).toLowerCase() === "desc" ? "DESC" : "ASC";
+  return [[...target, direction], ["id", "ASC"]];
+};
+
 // Unique slug among rows matching `scope` (e.g. the same category). Appends -1, -2, ... when taken.
 const generateUniqueSlug = async (Model, text, { scope = {}, excludeId = null, fallback = "item" } = {}) => {
   const base = slugify(text) || fallback;
@@ -119,6 +128,7 @@ module.exports = {
   deleteRequestFiles,
   parsePaging,
   buildPagination,
+  parseSort,
   generateUniqueSlug,
   isSlugTaken,
   countBy,

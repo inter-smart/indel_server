@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
 const { models } = require("../../models/index");
 const CustomError = require("../../utils/customError");
 const {
@@ -9,6 +9,7 @@ const {
   deleteRequestFiles,
   parsePaging,
   buildPagination,
+  parseSort,
   generateUniqueSlug,
   isSlugTaken,
   countBy,
@@ -22,6 +23,23 @@ const categoryInclude = {
   model: CelebrationCategories,
   as: "category",
   attributes: ["id", "title", "slug"],
+};
+
+const DEFAULT_ORDER = [
+  ["category_id", "ASC"],
+  ["order", "ASC"],
+  ["id", "DESC"],
+];
+
+// ?sort_by values. media_count is a correlated count, so sorting stays in SQL and paging stays correct.
+const SORTABLE = {
+  order: ["order"],
+  title: ["title"],
+  slug: ["slug"],
+  category: [{ model: CelebrationCategories, as: "category" }, "title"],
+  media_count: [
+    literal('(SELECT COUNT(*) FROM celebration_media AS m WHERE m.subcategory_id = "CelebrationSubcategories"."id")'),
+  ],
 };
 
 const withCounts = async (rows) => {
@@ -44,17 +62,17 @@ class CelebrationSubcategoriesController {
     try {
       const { search, category_id } = req.query;
       const { hasPaging, page, limit, offset } = parsePaging(req.query);
-      const order = [
-        ["category_id", "ASC"],
-        ["order", "ASC"],
-        ["id", "DESC"],
-      ];
+      const order = parseSort(req.query, SORTABLE, DEFAULT_ORDER);
 
       const where = {};
       if (category_id) where.category_id = parseInt(category_id, 10) || 0;
       if (search && search.trim()) {
         const term = `%${search.trim()}%`;
-        where[Op.or] = [{ title: { [Op.iLike]: term } }, { "$category.title$": { [Op.iLike]: term } }];
+        where[Op.or] = [
+          { title: { [Op.iLike]: term } },
+          { slug: { [Op.iLike]: term } },
+          { "$category.title$": { [Op.iLike]: term } },
+        ];
       }
 
       if (!hasPaging) {
