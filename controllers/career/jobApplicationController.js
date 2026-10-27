@@ -188,6 +188,10 @@ class JobApplicationSubmissionController {
         where: { email: applicant?.email },
       });
 
+      if (!existingApplicant && !file) {
+        throw new CustomError("Resume file is required for new applicants", 400);
+      }
+
       let applicantRecord;
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);

@@ -50,6 +50,10 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      thumbnail: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       video_link: {
         type: DataTypes.STRING,
         allowNull: true,

@@ -3,6 +3,7 @@ const router = express.Router();
 const WebController = require("../controllers/webController");
 const JobApplicationsController = require("../controllers/resumeController");
 const createUploadMiddleware = require("../middlewares/multerMiddleware");
+const { uploadResume } = require("../middlewares/resumeUploadMiddleware");
 const InvestorsController = require("../controllers/investorsController");
 const { validateJobApplicationSubmission, validateGeneralApplicationSubmission } = require("../utils/validator");
 const JobApplicationSubmissionController = require("../controllers/career/jobApplicationController");
@@ -12,7 +13,6 @@ const FaqController = require("../controllers/faqController");
 
 const upload = createUploadMiddleware("job-applications");
 const uploadField = upload.single("file");
-const uploadApplicantFile = upload.single("applicant[file]");
 
 router.get("/meta", MetaDataController.getMetaData);
 router.get("/gold-rate", GoldRateController.fetchGoldRate);
@@ -74,7 +74,7 @@ router.get("/ncd-forms", WebController.getNcdPageData);
 router.post("/career/resume", uploadField, JobApplicationsController.create);
 router.get("/career/resume", uploadField, JobApplicationsController.getAll);
 
-router.post("/careers/job_application", validateJobApplicationSubmission, uploadApplicantFile, JobApplicationSubmissionController.submitApplication);
+router.post("/careers/job_application", validateJobApplicationSubmission, uploadResume, JobApplicationSubmissionController.submitApplication);
 
 router.get("/careers/job_applications", JobApplicationSubmissionController.listApplications);
 router.get("/careers/export_job_applications", JobApplicationSubmissionController.exportApplicationsToExcel);
@@ -83,7 +83,7 @@ router.get("/careers/export_general_applications", JobApplicationSubmissionContr
 router.post(
   "/careers/general_application",
   validateGeneralApplicationSubmission,
-  uploadApplicantFile,
+  uploadResume,
   JobApplicationSubmissionController.submitGeneralApplication,
 );
 
