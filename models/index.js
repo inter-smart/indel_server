@@ -65,6 +65,10 @@ const defineCsr = require("./csr/csr");
 const defineGalleryPageContent = require("./gallery/galleryPageContent");
 const defineEventTypes = require("./gallery/eventTypes");
 const defineEventGallery = require("./gallery/eventGallery");
+const defineCelebrationPageContent = require("./celebrations/celebrationPageContent");
+const defineCelebrationCategories = require("./celebrations/celebrationCategories");
+const defineCelebrationSubcategories = require("./celebrations/celebrationSubcategories");
+const defineCelebrationMedia = require("./celebrations/celebrationMedia");
 const defineAwardPageContent = require("./awards/awardPageContent");
 const defineAwards = require("./awards/awards");
 const defineNewsPageContent = require("./news/newsPageContent");
@@ -199,6 +203,10 @@ const models = {
   GalleryPageContent: defineGalleryPageContent(sequelize),
   EventTypes: defineEventTypes(sequelize),
   EventGallery: defineEventGallery(sequelize),
+  CelebrationPageContent: defineCelebrationPageContent(sequelize),
+  CelebrationCategories: defineCelebrationCategories(sequelize),
+  CelebrationSubcategories: defineCelebrationSubcategories(sequelize),
+  CelebrationMedia: defineCelebrationMedia(sequelize),
   AwardPageContent: defineAwardPageContent(sequelize),
   Awards: defineAwards(sequelize),
   NewsPageContent: defineNewsPageContent(sequelize),
