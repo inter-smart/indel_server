@@ -10,6 +10,7 @@ const JobApplicationSubmissionController = require("../controllers/career/jobApp
 const MetaDataController = require("../controllers/meta/metaDataController");
 const GoldRateController = require("../controllers/general/goldRateController");
 const FaqController = require("../controllers/faqController");
+const CelebrationsWebController = require("../controllers/celebrations/celebrationsWebController");
 
 const upload = createUploadMiddleware("job-applications");
 const uploadField = upload.single("file");
@@ -44,6 +45,9 @@ router.get("/career-active-jobs", WebController.ActiveJobs);
 router.get("/event-gallery", WebController.eventGallery);
 router.get("/event", WebController.event);
 router.get("/more-events", WebController.galleryItems);
+router.get("/celebrations", CelebrationsWebController.categories);
+router.get("/celebrations/:slug", CelebrationsWebController.subcategories);
+router.get("/celebrations/:slug/:subSlug", CelebrationsWebController.media);
 router.get("/awards", WebController.Awards);
 router.get("/investors/report", InvestorsController.AnnualReports);
 router.get("/investors/contact", InvestorsController.contact);
