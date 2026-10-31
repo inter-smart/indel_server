@@ -576,10 +576,14 @@ class JobsController {
   }
 
   // Keep existing methods (getDropdowns, getAll, delete, updateOrder) unchanged
+  // `locations` was removed from this response - every known consumer (public
+  // frontend and all 8 admin Redux slices that call this endpoint) only reads
+  // roles/states/statuses; locations is fetched on-demand, district-scoped,
+  // elsewhere. Including it here meant shipping all active CareerLocations
+  // rows (128k+) on every call, unused.
   static async getDropdowns(req, res, next) {
     try {
-      console.log("Fetching job dropdowns...");
-      const [roles, locations, states, statuses] = await Promise.all([
+      const [roles, states, statuses] = await Promise.all([
         models.CareerRoles.findAll({
           where: { is_active: true },
           attributes: [
@@ -587,14 +591,6 @@ class JobsController {
             ["role_name", "label"],
           ],
           order: [["role_name", "ASC"]],
-        }),
-        models.CareerLocations.findAll({
-          where: { is_active: true },
-          attributes: [
-            ["id", "value"],
-            ["location_name", "label"],
-          ],
-          order: [["location_name", "ASC"]],
         }),
         models.CareerStates.findAll({
           where: { is_active: true },
@@ -616,7 +612,7 @@ class JobsController {
 
       res.json({
         success: true,
-        data: { roles, locations, states, statuses },
+        data: { roles, states, statuses },
       });
     } catch (error) {
       next(error);
