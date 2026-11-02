@@ -11,15 +11,15 @@ module.exports = (sequelize) => {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       button_text: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       button_link: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       state_id: {
         type: DataTypes.INTEGER,
@@ -60,7 +60,7 @@ module.exports = (sequelize) => {
       },
       image_alt_text: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       is_active: {
         type: DataTypes.BOOLEAN,
